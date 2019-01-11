@@ -464,6 +464,11 @@ function updateGridUI() {
       } else {
         activeCell.classList.remove("black");
       }
+      if (i > 0 && xw.fill[i - 1][j] == BLACK) {
+        activeCell.classList.add("black-adjacent");
+      } else {
+        activeCell.classList.remove("black-adjacent");
+      }
     }
   }
 }
