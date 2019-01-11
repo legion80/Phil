@@ -289,6 +289,10 @@ kbd {
   margin: 2px 0;
 }
 
+#sidebar ul.matches li .current {
+  color: var(--black);
+}
+
 #sidebar ul.matches li:hover {
   background: var(--lt-grey); /* For browsers that do not support gradients */
   color: var(--black);

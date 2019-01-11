@@ -91,7 +91,7 @@ function removeWordlistDuplicates() {
   }
 }
 
-function matchFromWordlist(word) {
+function matchFromWordlist(word, firstCharacterIndex) {
   const l = word.length;
   const actualLettersInWord = word.replace(/-/g, "").length;
   if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
@@ -103,6 +103,17 @@ function matchFromWordlist(word) {
         matches.push(wordlist[l][i]);
       }
     }
+
+    if (firstCharacterIndex == 0) {
+      return matches;
+    }
+
+    matches.sort(function (a,b) {
+      let result = a[firstCharacterIndex].localeCompare(b[firstCharacterIndex]);
+      if (result != 0)
+        return result;
+      return a.localeCompare(b);
+    });
     return matches;
   } else {
     return [];
@@ -114,19 +125,30 @@ function updateMatchesUI() {
   let downMatchList = document.getElementById("down-matches");
   acrossMatchList.innerHTML = "";
   downMatchList.innerHTML = "";
-  const acrossMatches = matchFromWordlist(current.acrossWord);
-  const downMatches = matchFromWordlist(current.downWord);
+
+  const acrossCharacterIndex = current.col - current.acrossStartIndex;
+  const acrossMatches = matchFromWordlist(current.acrossWord, acrossCharacterIndex);
   for (i = 0; i < acrossMatches.length; i++) {
     let li = document.createElement("LI");
-    li.innerHTML = acrossMatches[i].toLowerCase();
+    let word = acrossMatches[i].toLowerCase();
+    let before = word.substring(0, acrossCharacterIndex);
+    let char = word[acrossCharacterIndex];
+    let after = word.substring(acrossCharacterIndex + 1);
+    li.innerHTML = before + '<span class="current">' + char + '</span>' + after;
     li.className = "";
     // li.addEventListener('click', printScore);
     li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
   }
+  const downCharacterIndex = current.row - current.downStartIndex;
+  const downMatches = matchFromWordlist(current.downWord, downCharacterIndex);
   for (i = 0; i < downMatches.length; i++) {
     let li = document.createElement("LI");
-    li.innerHTML = downMatches[i].toLowerCase();
+    let word = downMatches[i].toLowerCase();
+    let before = word.substring(0, downCharacterIndex);
+    let char = word[downCharacterIndex];
+    let after = word.substring(downCharacterIndex + 1);
+    li.innerHTML = before + '<span class="current">' + char + '</span>' + after;
     li.className = "";
     li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
