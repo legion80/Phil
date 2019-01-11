@@ -128,18 +128,36 @@ function updateMatchesUI() {
 
   const acrossCharacterIndex = current.col - current.acrossStartIndex;
   const acrossMatches = matchFromWordlist(current.acrossWord, acrossCharacterIndex);
+  let previousFirstWordMatch = null, previousChar = null, previousIndex = -1;
   for (i = 0; i < acrossMatches.length; i++) {
     let li = document.createElement("LI");
     let word = acrossMatches[i].toLowerCase();
     let before = word.substring(0, acrossCharacterIndex);
     let char = word[acrossCharacterIndex];
     let after = word.substring(acrossCharacterIndex + 1);
-    li.innerHTML = before + '<span class="current">' + char + '</span>' + after;
+    li.innerHTML = before + `<span class="current">${char}</span>${after}`;
     li.className = "";
     // li.addEventListener('click', printScore);
     li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
+
+    if (!previousFirstWordMatch) {
+      previousFirstWordMatch = li;
+      previousChar = char;
+      previousIndex = i;
+    } else if (char != previousChar) {
+      previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${acrossMatches.length}</span>`;
+      previousFirstWordMatch = li;
+      previousChar = char;
+      previousIndex = i;
+    }
   }
+  previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${acrossMatches.length}</span>`;
+
+  previousFirstWordMatch = null;
+  previousChar = null;
+  previousIndex = -1;
+
   const downCharacterIndex = current.row - current.downStartIndex;
   const downMatches = matchFromWordlist(current.downWord, downCharacterIndex);
   for (i = 0; i < downMatches.length; i++) {
@@ -148,11 +166,23 @@ function updateMatchesUI() {
     let before = word.substring(0, downCharacterIndex);
     let char = word[downCharacterIndex];
     let after = word.substring(downCharacterIndex + 1);
-    li.innerHTML = before + '<span class="current">' + char + '</span>' + after;
+    li.innerHTML = before + `<span class="current">${char}</span>${after}`;
     li.className = "";
     li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
+
+    if (!previousFirstWordMatch) {
+      previousFirstWordMatch = li;
+      previousChar = char;
+      previousIndex = i;
+    } else if (char != previousChar) {
+      previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${downMatches.length}</span>`;
+      previousFirstWordMatch = li;
+      previousChar = char;
+      previousIndex = i;
+    }
   }
+  previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${downMatches.length}</span>`;
 }
 
 function fillGridWithMatch(e) {

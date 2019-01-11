@@ -12,10 +12,13 @@
   --dk-blue-mono: #656565;
   --green: #00ff00;
   --red: #ff3333;
+
+  --body-font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
+;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
+  font-family: var(--body-font-family);
   width: 885px;
   margin: 5px;
 }
@@ -311,6 +314,13 @@ kbd {
   background: var(--lt-grey); /* For browsers that do not support gradients */
   color: var(--black);
   font-weight: 500;
+}
+
+#sidebar ul.matches li .count {
+  float: right;
+  font-size: .5em;
+  font-family: var(--body-font-family);
+  letter-spacing: 0px;
 }
 
 #toolbar {
