@@ -309,6 +309,9 @@ kbd {
 #sidebar ul.matches li .current {
   color: var(--dk-grey);
 }
+#sidebar ul.matches li .current.match {
+  color: var(--dk-blue);
+}
 
 #sidebar ul.matches li:hover {
   background: var(--lt-grey); /* For browsers that do not support gradients */

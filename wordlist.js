@@ -128,14 +128,54 @@ function updateMatchesUI() {
 
   const acrossCharacterIndex = current.col - current.acrossStartIndex;
   const acrossMatches = matchFromWordlist(current.acrossWord, acrossCharacterIndex);
-  let previousFirstWordMatch = null, previousChar = null, previousIndex = -1;
+  const downCharacterIndex = current.row - current.downStartIndex;
+  const downMatches = matchFromWordlist(current.downWord, downCharacterIndex);
+  const characterMatch = {};
+
+  let previousChar = null;
+  for (i = 0; i < acrossMatches.length; i++) {
+    if (!previousChar) {
+      previousChar = acrossMatches[i][acrossCharacterIndex].toLowerCase();
+      continue;
+    }
+
+    let currentChar = acrossMatches[i][acrossCharacterIndex].toLowerCase();
+    if (currentChar != previousChar) {
+      characterMatch[previousChar] = 1;
+      previousChar = currentChar;
+    }
+  }
+  if (previousChar) {
+    characterMatch[previousChar] = 1;
+  }
+  previousChar = null;
+  for (i = 0; i < downMatches.length; i++) {
+    if (!previousChar) {
+      previousChar = downMatches[i][downCharacterIndex].toLowerCase();
+      continue;
+    }
+
+    let currentChar = downMatches[i][downCharacterIndex].toLowerCase();
+    if (currentChar != previousChar) {
+      characterMatch[previousChar] = characterMatch[previousChar] ? 2 : 1;
+      previousChar = currentChar;
+    }
+  }
+  if (previousChar) {
+    characterMatch[previousChar] = characterMatch[previousChar] ? 2 : 1;
+  }
+  console.log(characterMatch);
+  let previousFirstWordMatch = null, previousIndex = -1;
+  previousChar = null;
   for (i = 0; i < acrossMatches.length; i++) {
     let li = document.createElement("LI");
     let word = acrossMatches[i].toLowerCase();
     let before = word.substring(0, acrossCharacterIndex);
     let char = word[acrossCharacterIndex];
     let after = word.substring(acrossCharacterIndex + 1);
-    li.innerHTML = before + `<span class="current">${char}</span>${after}`;
+    let matchClass = characterMatch[char] === 2 ? "match" : "";
+    console.log(char+": "+characterMatch[char]);
+    li.innerHTML = `${before}<span class="current ${matchClass}">${char}</span>${after}`;
     li.className = "";
     // li.addEventListener('click', printScore);
     li.addEventListener('dblclick', fillGridWithMatch);
@@ -152,21 +192,22 @@ function updateMatchesUI() {
       previousIndex = i;
     }
   }
-  previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${acrossMatches.length}</span>`;
+  if (previousFirstWordMatch) {
+    previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${acrossMatches.length}</span>`;
+  }
 
   previousFirstWordMatch = null;
   previousChar = null;
   previousIndex = -1;
-
-  const downCharacterIndex = current.row - current.downStartIndex;
-  const downMatches = matchFromWordlist(current.downWord, downCharacterIndex);
   for (i = 0; i < downMatches.length; i++) {
     let li = document.createElement("LI");
     let word = downMatches[i].toLowerCase();
     let before = word.substring(0, downCharacterIndex);
     let char = word[downCharacterIndex];
     let after = word.substring(downCharacterIndex + 1);
-    li.innerHTML = before + `<span class="current">${char}</span>${after}`;
+    let matchClass = characterMatch[char] === 2 ? "match" : "";
+    console.log(char+": "+characterMatch[char]);
+    li.innerHTML = `${before}<span class="current ${matchClass}">${char}</span>${after}`;
     li.className = "";
     li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
@@ -182,7 +223,9 @@ function updateMatchesUI() {
       previousIndex = i;
     }
   }
-  previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${downMatches.length}</span>`;
+  if (previousFirstWordMatch) {
+    previousFirstWordMatch.innerHTML += ` <span class="count">${i - previousIndex}/${downMatches.length}</span>`;
+  }
 }
 
 function fillGridWithMatch(e) {
