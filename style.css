@@ -287,6 +287,8 @@ kbd {
 
 #sidebar ul.matches li {
   margin: 2px 0;
+  font-family: Monaco, monospace;
+  letter-spacing: .1em;
 }
 
 #sidebar ul.matches li .current {
